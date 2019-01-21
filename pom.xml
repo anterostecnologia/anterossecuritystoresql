@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>br.com.anteros</groupId>
+	<artifactId>Anteros-Security-Store-SQL</artifactId>
+	<version>1.0.0</version>
+	
+	<properties>
+		<java.versao>1.8</java.versao>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<springsecurityoauth2.version>2.3.3.RELEASE</springsecurityoauth2.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>br.com.anteros</groupId>
+			<artifactId>Anteros-Security-Store</artifactId>
+			<version>[1.0.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.anteros</groupId>
+			<artifactId>Anteros-Persistence-Core</artifactId>
+			<version>[1.0.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.anteros</groupId>
+			<artifactId>Anteros-Persistence-Apt</artifactId>
+			<version>[1.0.0,)</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.7</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${springsecurityoauth2.version}</version>
+		</dependency>	
+	</dependencies>
+</project>
