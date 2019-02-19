@@ -27,6 +27,7 @@ import br.com.anteros.persistence.metadata.annotation.Fetch;
 import br.com.anteros.persistence.metadata.annotation.ForeignKey;
 import br.com.anteros.persistence.metadata.annotation.JoinColumn;
 import br.com.anteros.persistence.metadata.annotation.JoinTable;
+import br.com.anteros.persistence.metadata.annotation.Lob;
 import br.com.anteros.persistence.metadata.annotation.type.BooleanType;
 import br.com.anteros.persistence.metadata.annotation.type.FetchMode;
 import br.com.anteros.persistence.metadata.annotation.type.FetchType;
@@ -109,6 +110,10 @@ public class User extends Security implements IUser {
 	@BooleanValue(falseValue = "N", trueValue = "S", type=BooleanType.STRING)
 	@Column(name = "BO_ADMINISTRADOR", length = 1, required = true, defaultValue = "'N'")
 	private Boolean boAdministrator;
+	
+	@Lob
+	@Column(name="AVATAR")
+	private String avatar;
 
 	/*
 	 * Horário de acesso do usuário
@@ -292,6 +297,15 @@ public class User extends Security implements IUser {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	@Override
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 }

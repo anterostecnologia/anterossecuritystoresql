@@ -52,14 +52,14 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.7</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>${springsecurityoauth2.version}</version>
-		</dependency>	
+		</dependency>
 	</dependencies>
-	
+
 	<name>Anteros Security Store SQL</name>
 	<description>
          Anteros Security Store SQL for Java.
@@ -82,7 +82,7 @@
 		<developerConnection>scm:git:git@github.com:anterostecnologia/anterossecuritystoresql.git</developerConnection>
 		<url>https://github.com/anterostecnologia/anterossecuritystoresql</url>
 	</scm>
-	
+
 	<developers>
 		<developer>
 			<id>edson</id>
@@ -96,8 +96,33 @@
 			</roles>
 		</developer>
 	</developers>
-	
-	
+
+	<!-- <build>
+		<plugins>
+			<plugin>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
+				<version>2.2.4</version>
+				<executions>
+					<execution>
+						<id>process</id>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-sources/annotations</outputDirectory>
+							<processors>
+								<processor>br.com.anteros.persistence.apt.AnterosPersistenceAnnotationProcessor</processor>
+							</processors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build> -->
+
+
 	<profiles>
 		<profile>
 			<id>maven-central</id>
