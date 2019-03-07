@@ -235,12 +235,17 @@ public class Action implements Serializable, IAction {
 		return new Action(actionName,description,category,resource,version);
 	}
 
-	public String getId() {
-		return id+"";
+	public Long getId() {
+		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	@Override
+	public String getActionId() {
+		return id+"";
 	}
 
 

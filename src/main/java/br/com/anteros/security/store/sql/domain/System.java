@@ -175,7 +175,12 @@ public class System implements Serializable, ISystem {
 		return new System(systemName,description);
 	}
 
-	public String getId() {
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public String getSystemId() {
 		return id+"";
 	}
 

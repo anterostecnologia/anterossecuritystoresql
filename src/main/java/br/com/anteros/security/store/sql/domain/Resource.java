@@ -193,8 +193,8 @@ public class Resource implements Serializable, IResource {
 		return new Resource(resourceName, description, system);
 	}
 
-	public String getId() {
-		return id+"";
+	public Long getId() {
+		return id;
 	}
 
 	public void setId(Long id) {
@@ -205,6 +205,11 @@ public class Resource implements Serializable, IResource {
 	public IResource addAction(IAction action) {
 		actions.add((Action) action);
 		return this;
+	}
+
+	@Override
+	public String getResourceId() {
+		return id+"";
 	}
 
 }

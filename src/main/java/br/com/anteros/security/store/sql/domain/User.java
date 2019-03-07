@@ -308,4 +308,9 @@ public class User extends Security implements IUser {
 		this.avatar = avatar;
 	}
 
+	@Override
+	public String getUserId() {
+		return this.getId()+"";
+	}
+
 }

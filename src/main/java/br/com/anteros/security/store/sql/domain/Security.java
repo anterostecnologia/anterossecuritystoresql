@@ -97,8 +97,8 @@ public abstract class Security implements Serializable {
 	@Column(name = "EMAIL", length = 250)
 	private String email;
 
-	public String getId() {
-		return id+"";
+	public Long getId() {
+		return id;
 	}
 
 	public void setId(Long id) {

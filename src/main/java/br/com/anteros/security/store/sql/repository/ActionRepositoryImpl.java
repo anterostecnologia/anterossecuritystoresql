@@ -66,7 +66,7 @@ public class ActionRepositoryImpl extends GenericSQLRepository<Action, Long> imp
 		try {
 			this.getSession().getTransaction().begin();
 			this.getSession().createQuery("delete from SEGURANCAACAOACAO where id_acao = :pid_acao",
-					new NamedParameter("pid_acao", act.getId())).executeQuery();
+					new NamedParameter("pid_acao", act.getActionId())).executeQuery();
 			this.remove((Action) act);
 			this.getSession().getTransaction().commit();
 		} catch (Exception e) {
