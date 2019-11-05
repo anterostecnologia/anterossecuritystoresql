@@ -33,27 +33,27 @@ public class Client implements Serializable, IClient {
 	
 	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTSCOPE")
-	@Column(name = "SCOPE", label = "Scope")	
+	@Column(name = "SCOPE", label = "Scope", length = 150)	
     private Set<String> scope;
 	
 	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTRESOURCES")
-	@Column(name = "RESOURCEID", label = "Resource Id")
+	@Column(name = "RESOURCEID", label = "Resource Id", length = 150)
     private Set<String> resourceIds;
 	
 	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTGRANTS")
-	@Column(name = "GRANT_TYPES", label = "Grant types")
+	@Column(name = "GRANT_TYPES", label = "Grant types", length = 150)
     private Set<String> authorizedGrantTypes;
 	
 	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTREDIRECT")
-	@Column(name = "REDIRECT_URIS", label = "Redirect Uri")
+	@Column(name = "REDIRECT_URIS", label = "Redirect Uri", length = 150)
     private Set<String> registeredRedirectUris;
 	
 	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTAUTHORITIES")
-	@Column(name = "AUTHORITIES", label = "Authorities")
+	@Column(name = "AUTHORITIES", label = "Authorities", length = 150)
     private List<String> authorities;
 	
 	@Column(name="ACCESS_TOKEN_VALID_SECONDS", precision=7)
