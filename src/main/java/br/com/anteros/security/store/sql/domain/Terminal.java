@@ -17,13 +17,18 @@ package br.com.anteros.security.store.sql.domain;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
 import br.com.anteros.persistence.metadata.annotation.GeneratedValue;
 import br.com.anteros.persistence.metadata.annotation.Id;
 import br.com.anteros.persistence.metadata.annotation.SequenceGenerator;
 import br.com.anteros.persistence.metadata.annotation.Table;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 import br.com.anteros.persistence.metadata.annotation.type.GeneratedType;
+import br.com.anteros.validation.api.constraints.Size;
 
 /**
  * Terminal
@@ -48,19 +53,30 @@ public class Terminal implements Serializable {
 	/*
 	 * Nome do terminal de acesso
 	 */
-	@Column(name="NOME_TERMINAL", length=40, required=true)
+	@Required
+	@Column(name="NOME_TERMINAL", length=40, required=true, label="Nome do terminal")
 	private String name;
+	
+	@Required
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
 	
 	/*
 	 * Descrição do terminal de acesso
 	 */
-	@Column(name="DS_TERMINAL", length=40, required=true)
+	@Required
+	@Size(max=40, min=5)
+	@Column(name="DS_TERMINAL", length=40, required=true, label="Descrição do terminal")
 	private String description;
 	
 	/*
 	 * Endereço IP do terminal de acesso
 	 */
-	@Column(name="ENDERECO_IP", length=15, required=true)
+	@Required
+	@Size(max=15)
+	@Column(name="ENDERECO_IP", length=15, required=true, label="Endereço IP")
 	private String ipAddress;
 
 	public Long getId() {
@@ -93,6 +109,14 @@ public class Terminal implements Serializable {
 
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	

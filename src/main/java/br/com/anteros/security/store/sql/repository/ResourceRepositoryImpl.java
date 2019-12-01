@@ -44,7 +44,7 @@ public class ResourceRepositoryImpl extends GenericSQLRepository<Resource, Long>
 		Resource resource = this.findOneBySql(
 				"select rec.* from SEGURANCARECURSO rec, SEGURANCASISTEMA sis where sis.nome_sistema = :pnome_sistema and rec.nome_recurso = :pnome_recurso and rec.id_sistema = sis.id_sistema ",
 				NamedParameter.list().addParameter("pnome_sistema", systemName)
-						.addParameter("pnome_recurso", resourceName).values());
+						.addParameter("pnome_recurso", resourceName).values(),null);
 		return resource;
 	}
 
@@ -70,7 +70,7 @@ public class ResourceRepositoryImpl extends GenericSQLRepository<Resource, Long>
 
 	@Override
 	public Resource refreshResource(IResource resource) {
-		this.refresh((Resource) resource);
+		this.refresh((Resource) resource,null);
 		return (Resource)resource;
 	}
 

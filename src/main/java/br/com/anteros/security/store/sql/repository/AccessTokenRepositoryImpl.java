@@ -41,7 +41,7 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 	public AccessToken findByToken(String tokenKey) {
 		AccessToken accessToken = this.findOneBySql(
 				"select tk.* from TOKEN_ACESSO tk where tk.TOKEN_ID = :PTOKEN_ID",
-				new NamedParameter("PTOKEN_ID", tokenKey));
+				new NamedParameter("PTOKEN_ID", tokenKey),null);
 		return accessToken;
 	}
 
@@ -49,7 +49,7 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 	public AccessToken findByAuthenticationId(String key) {
 		AccessToken accessToken = this.findOneBySql(
 				"select tk.* from TOKEN_ACESSO tk where tk.AUTENTICACAO_ID = :PAUTENTICACAO_ID",
-				new NamedParameter("PAUTENTICACAO_ID", key));
+				new NamedParameter("PAUTENTICACAO_ID", key),null);
 		return accessToken;
 	}
 
@@ -57,7 +57,7 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 	public List<AccessToken> findByUsernameAndClientId(String userName, String clientId) {
 		List<AccessToken> result = this.find(
 				"select tk.* from TOKEN_ACESSO tk where tk.USUARIO = :PUSUARIO AND tk.CLIENT_ID = :PCLIENT_ID",
-				NamedParameter.list().addParameter("PUSUARIO", userName).addParameter("PCLIENT_ID",clientId));
+				NamedParameter.list().addParameter("PUSUARIO", userName).addParameter("PCLIENT_ID",clientId),null);
 		return result;
 	}
 
@@ -65,7 +65,7 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 	public List<AccessToken> findByClientId(String clientId) {
 		List<AccessToken> result = this.find(
 				"select tk.* from TOKEN_ACESSO tk where tk.CLIENT_ID = :PCLIENT_ID",
-				NamedParameter.list().addParameter("PCLIENT_ID",clientId));
+				NamedParameter.list().addParameter("PCLIENT_ID",clientId),null);
 		return result;
 	}
 
@@ -73,7 +73,7 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 	public void deleteByRefreshTokenId(String tokenId) {
 		AccessToken accessToken = this.findOneBySql(
 				"select tk.* from TOKEN_ACESSO tk where tk.REFRESH_TOKEN = :PREFRESH_TOKEN",
-				new NamedParameter("PREFRESH_TOKEN", tokenId));
+				new NamedParameter("PREFRESH_TOKEN", tokenId),null);
 		this.remove(accessToken);		
 	}
 
@@ -101,7 +101,7 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 	public AccessToken findByTokenId(String tokenId) {
 		AccessToken accessToken = this.findOneBySql(
 				"select tk.* from TOKEN_ACESSO tk where tk.TOKEN_ID = :PTOKEN_ID",
-				new NamedParameter("PTOKEN_ID", tokenId));
+				new NamedParameter("PTOKEN_ID", tokenId), null);
 		return accessToken;
 	}
 	

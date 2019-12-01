@@ -37,9 +37,8 @@ public class SystemRepositoryImpl extends GenericSQLRepository<System, Long> imp
 
 	@Override
 	public System getSystemByName(String systemName) {
-		System system = this.findOneBySql(
-				"select sis.* from SEGURANCASISTEMA sis where sis.nome_sistema = :pnome_sistema",
-				new NamedParameter("pnome_sistema", systemName));
+		System system = this.findOneBySql("select sis.* from SEGURANCASISTEMA sis where sis.nome_sistema = :pnome_sistema",
+				new NamedParameter("pnome_sistema", systemName),null);
 		return system;
 	}
 

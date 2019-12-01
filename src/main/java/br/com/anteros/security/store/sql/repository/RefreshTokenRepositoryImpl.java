@@ -26,7 +26,7 @@ public class RefreshTokenRepositoryImpl extends GenericSQLRepository<RefreshToke
 	public RefreshToken findByTokenId(String tokenId) {
 		RefreshToken refreshToken = this.findOneBySql(
 				"select rt.* from REFRESH_TOKEN_ACESSO rt where rt.TOKEN_ID = :PTOKEN_ID ",
-				NamedParameter.list().addParameter("PTOKEN_ID", tokenId).values());
+				NamedParameter.list().addParameter("PTOKEN_ID", tokenId).values(),null);
 		return refreshToken;
 	}
 

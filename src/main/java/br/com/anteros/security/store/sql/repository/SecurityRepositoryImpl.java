@@ -15,13 +15,19 @@
  *******************************************************************************/
 package br.com.anteros.security.store.sql.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
+import br.com.anteros.persistence.metadata.EntityCache;
+import br.com.anteros.persistence.metadata.descriptor.DescriptionField;
 import br.com.anteros.persistence.parameter.NamedParameter;
 import br.com.anteros.persistence.session.SQLSessionFactory;
+import br.com.anteros.persistence.session.query.SQLQueryException;
 import br.com.anteros.persistence.session.repository.impl.GenericSQLRepository;
 import br.com.anteros.security.store.sql.domain.Security;
 import br.com.anteros.security.store.sql.domain.User;
@@ -35,9 +41,27 @@ public class SecurityRepositoryImpl extends GenericSQLRepository<Security, Long>
 	public SecurityRepositoryImpl(@Qualifier("securitySessionFactory") SQLSessionFactory sessionFactory) throws Exception {
 		super(sessionFactory);
 	}
+	
+	protected DescriptionField getTenantId() {
+		List<EntityCache> entityCaches = getSession().getEntityCacheManager().getEntityCachesByTableName(getEntityCache().getTableName());
+		for (EntityCache entityCache : entityCaches) {
+			if (entityCache.getTenantId()!=null) {
+				return entityCache.getTenantId();
+			}
+		}
+		return null;
+	}
 
 	public User findUserByName(String userName) {
-		return (User) findOneBySql("select * from SEGURANCA where login = :plogin", new NamedParameter("plogin", userName));
+		String sql= "select * from SEGURANCA SEG where SEG.login = :plogin";
+		String[] sUserName = userName.split("/@");
+		DescriptionField tenantId = getTenantId();
+		if (tenantId!=null && sUserName.length>1) {
+			sql = sql + " AND SEG."+tenantId.getSimpleColumn().getColumnName()+" = "+'"'+sUserName[1]+'"';
+		}
+
+		
+		return (User) findOneBySql(sql, new NamedParameter("plogin", sUserName[0]),null);
 	}
 
 	@Override

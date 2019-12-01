@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import br.com.anteros.persistence.metadata.annotation.Cascade;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
@@ -98,6 +100,7 @@ public class Resource implements Serializable, IResource {
 		this.system = system;
 	}
 
+	@JsonIgnore
 	public List<IAction> getActionList() {
 		List<IAction> result = new ArrayList<IAction>();
 		if (actions != null) {
@@ -201,12 +204,14 @@ public class Resource implements Serializable, IResource {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	@Override
 	public IResource addAction(IAction action) {
 		actions.add((Action) action);
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getResourceId() {
 		return id+"";

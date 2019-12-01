@@ -17,6 +17,9 @@ package br.com.anteros.security.store.sql.domain;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
 import br.com.anteros.persistence.metadata.annotation.ForeignKey;
@@ -24,6 +27,7 @@ import br.com.anteros.persistence.metadata.annotation.GeneratedValue;
 import br.com.anteros.persistence.metadata.annotation.Id;
 import br.com.anteros.persistence.metadata.annotation.SequenceGenerator;
 import br.com.anteros.persistence.metadata.annotation.Table;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 import br.com.anteros.persistence.metadata.annotation.type.GeneratedType;
 
@@ -48,33 +52,39 @@ public class SecurityAccess implements Serializable {
 	@GeneratedValue(strategy = GeneratedType.AUTO)
 	@SequenceGenerator(sequenceName = "SEQ_ACESSO", initialValue = 1)
 	private Long id;
+	
+	@Required
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
 
 	/*
 	 * Identificador do horário de acesso
 	 */
-	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_HORARIO", required = true)
+	@ForeignKey
+	@Column(name = "ID_HORARIO", required = true, label="Horário de acesso")
 	private AccessTime accessTime;
 
 	/*
 	 * Identificador do segurança
 	 */
-	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_SEGURANCA", required = true)
+	@ForeignKey
+	@Column(name = "ID_SEGURANCA", required = true, label="Usuário/perfil")
 	private Security security;
 
 	/*
 	 * Terminal de acesso
 	 */
-	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_TERMINAL", required = true)
+	@ForeignKey
+	@Column(name = "ID_TERMINAL", required = true, label="Terminal")
 	private Terminal terminal;
 
 	/*
 	 * Identificador do sistema
 	 */
-	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_SISTEMA", required = true)
+	@ForeignKey
+	@Column(name = "ID_SISTEMA", required = true, label="Sistema")
 	private System system;
 
 	public Long getId() {
@@ -115,6 +125,14 @@ public class SecurityAccess implements Serializable {
 
 	public void setSystem(System system) {
 		this.system = system;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	

@@ -15,8 +15,13 @@
  *******************************************************************************/
 package br.com.anteros.security.store.sql.domain;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import br.com.anteros.bean.validation.constraints.UUID;
+import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.DiscriminatorValue;
 import br.com.anteros.persistence.metadata.annotation.Entity;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 
 
 /**
@@ -32,5 +37,18 @@ import br.com.anteros.persistence.metadata.annotation.Entity;
 @DiscriminatorValue(value = "PERFIL")
 public class Profile extends Security {
 
+	@Required
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 	
 }

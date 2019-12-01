@@ -18,6 +18,9 @@ package br.com.anteros.security.store.sql.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.Cascade;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
@@ -26,10 +29,12 @@ import br.com.anteros.persistence.metadata.annotation.GeneratedValue;
 import br.com.anteros.persistence.metadata.annotation.Id;
 import br.com.anteros.persistence.metadata.annotation.SequenceGenerator;
 import br.com.anteros.persistence.metadata.annotation.Table;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 import br.com.anteros.persistence.metadata.annotation.type.CascadeType;
 import br.com.anteros.persistence.metadata.annotation.type.FetchMode;
 import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 import br.com.anteros.persistence.metadata.annotation.type.GeneratedType;
+import br.com.anteros.validation.api.constraints.Size;
 
 /**
  * HorarioAcesso
@@ -50,11 +55,19 @@ public class AccessTime implements Serializable {
 	@GeneratedValue(strategy = GeneratedType.AUTO)
 	@SequenceGenerator(sequenceName = "SEQ_HORARIO", initialValue = 1)
 	private Long id;
+	
+	@Required
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
 
 	/*
 	 * Descrição do horário de acesso
 	 */
-	@Column(name = "DS_HORARIO", length = 40, required = true)
+	@Required
+	@Size(max=40, min=5)
+	@Column(name = "DS_HORARIO", length = 40, required = true, label="Horário de acesso")
 	private String description;
 
 	@Fetch(type = FetchType.LAZY, mode = FetchMode.ONE_TO_MANY, mappedBy = "accessTime")
@@ -83,6 +96,14 @@ public class AccessTime implements Serializable {
 
 	public void setIntervals(List<AccessTimeInterval> intervals) {
 		this.intervals = intervals;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }

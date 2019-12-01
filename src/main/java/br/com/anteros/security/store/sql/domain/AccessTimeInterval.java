@@ -17,6 +17,9 @@ package br.com.anteros.security.store.sql.domain;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
 import br.com.anteros.persistence.metadata.annotation.ForeignKey;
@@ -24,6 +27,7 @@ import br.com.anteros.persistence.metadata.annotation.GeneratedValue;
 import br.com.anteros.persistence.metadata.annotation.Id;
 import br.com.anteros.persistence.metadata.annotation.SequenceGenerator;
 import br.com.anteros.persistence.metadata.annotation.Table;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 import br.com.anteros.persistence.metadata.annotation.type.GeneratedType;
 
@@ -52,27 +56,33 @@ public class AccessTimeInterval implements Serializable {
 	 * Horário de acesso a qual pertence o intervalo
 	 */
 	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_HORARIO", inversedColumn = "ID_HORARIO", required = true)
+	@Column(name = "ID_HORARIO", inversedColumn = "ID_HORARIO", required = true, label="Horário de acesso")
 	private AccessTime accessTime;
+	
+	@Required
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
 
 	/*
 	 * Dia da semana
 	 */
-	@Column(name = "DIA_SEMANA", length = 2, required = true)
+	@Column(name = "DIA_SEMANA", length = 2, required = true, label="Dia da semana")
 	private Long dayOfWeek;
 
 	/*
 	 * Hora Inicial
 	 */
 	//@Temporal(TemporalType.DATE_TIME)
-	@Column(name = "HORA_INICIAL", required = true, length=4)
+	@Column(name = "HORA_INICIAL", required = true, length=4, label="Hora inicial")
 	private String startTime;
 
 	/*
 	 * Hora Final
 	 */
 	//@Temporal(TemporalType.DATE_TIME)
-	@Column(name = "HORA_FINAL", required = true, length=4)
+	@Column(name = "HORA_FINAL", required = true, length=4, label="hora final")
 	private String endTime;
 
 	public Long getId() {
@@ -113,6 +123,14 @@ public class AccessTimeInterval implements Serializable {
 
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 

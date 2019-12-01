@@ -17,11 +17,16 @@ package br.com.anteros.security.store.sql.domain;
 
 import java.util.List;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+
+import br.com.anteros.bean.validation.constraints.UUID;
+import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.DiscriminatorValue;
 import br.com.anteros.persistence.metadata.annotation.Entity;
 import br.com.anteros.persistence.metadata.annotation.Fetch;
 import br.com.anteros.persistence.metadata.annotation.JoinColumn;
 import br.com.anteros.persistence.metadata.annotation.JoinTable;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 import br.com.anteros.persistence.metadata.annotation.type.FetchMode;
 import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 
@@ -37,6 +42,12 @@ import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 @Entity
 @DiscriminatorValue(value = "GRUPO")
 public class Group extends Security {
+	
+	@Required
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
 
 	/*
 	 * Lista de membros do Grupo (Usuários)
@@ -51,6 +62,14 @@ public class Group extends Security {
 
 	public void setMembers(List<User> members) {
 		this.members = members;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 

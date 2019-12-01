@@ -19,6 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.BooleanValue;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.DiscriminatorValue;
@@ -28,12 +34,14 @@ import br.com.anteros.persistence.metadata.annotation.ForeignKey;
 import br.com.anteros.persistence.metadata.annotation.JoinColumn;
 import br.com.anteros.persistence.metadata.annotation.JoinTable;
 import br.com.anteros.persistence.metadata.annotation.Lob;
+import br.com.anteros.persistence.metadata.annotation.TenantId;
 import br.com.anteros.persistence.metadata.annotation.type.BooleanType;
 import br.com.anteros.persistence.metadata.annotation.type.FetchMode;
 import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 import br.com.anteros.security.store.domain.IAction;
 import br.com.anteros.security.store.domain.IProfile;
 import br.com.anteros.security.store.domain.IUser;
+import br.com.anteros.validation.api.constraints.Size;
 
 /**
  * Usuario
@@ -44,82 +52,100 @@ import br.com.anteros.security.store.domain.IUser;
  * @author Edson Martins edsonmartins2005@gmail.com
  */
 
+
+@JsonIgnoreProperties({ "actionList", "getActionList" })
 @Entity
 @DiscriminatorValue(value = "USUARIO")
 public class User extends Security implements IUser {
 
+	@UUID
+	@TenantId
+	@Column(name="ID_OWNER", length = 40, label="Proprietário do banco de dados")
+	private String owner;
+	
 	/*
 	 * Login do usuário
 	 */
-	@Column(name = "LOGIN", length = 20)
+	@Required
+	@Size(max=20, min=5)
+	@Column(name = "LOGIN", length = 20, label="Login")
 	private String login;
 
 	/*
 	 * Senha do usuário
 	 */
-	@Column(name = "SENHA", length = 100)
+	@Required
+	@Size(max=100, min=8)
+	@Column(name = "SENHA", length = 100, label="Senha")
 	private String password;
 
 	/*
 	 * O usuário deve alterar a senha no próximo Login?
 	 */
+	@Required
 	@BooleanValue(trueValue = "S", falseValue = "N", type=BooleanType.STRING)
-	@Column(name = "BO_ALTERAR_SENHA_PROX_LOGIN", required = true, defaultValue = "'N'")
+	@Column(name = "BO_ALTERAR_SENHA_PROX_LOGIN", required = true, defaultValue = "'N'", label="Alterar senha no próximo login?")
 	private Boolean changePasswordOnNextLogin;
 
 	/*
 	 * O usuário pode alterar a senha?
 	 */
+	@Required
 	@BooleanValue(trueValue = "S", falseValue = "N", type=BooleanType.STRING)
-	@Column(name = "BO_PERMITE_ALTERAR_SENHA", required = true, defaultValue = "'N'")
+	@Column(name = "BO_PERMITE_ALTERAR_SENHA", required = true, defaultValue = "'N'", label="Permite alterar a senha?")
 	private Boolean allowChangePassword;
 
 	/*
 	 * Permite o usuário efetuar vários logins em um mesmo sistema?
 	 */
+	@Required
 	@BooleanValue(trueValue = "S", falseValue = "N", type=BooleanType.STRING)
-	@Column(name = "BO_PERMITE_MULTIPLOS_LOGINS", required = true, defaultValue = "'N'")
+	@Column(name = "BO_PERMITE_MULTIPLOS_LOGINS", required = true, defaultValue = "'N'", label="Permite múltiplos logins?")
 	private Boolean allowMultipleLogins;
 
 	/*
 	 * A senha do usuário nunca expira?
 	 */
+	@Required
 	@BooleanValue(trueValue = "S", falseValue = "N", type=BooleanType.STRING)
-	@Column(name = "BO_SENHA_NUNCA_EXPIRA", required = true, defaultValue = "'N'")
+	@Column(name = "BO_SENHA_NUNCA_EXPIRA", required = true, defaultValue = "'N'",label="Senha nunca expira?")
 	private Boolean passwordNeverExpire;
 
 	/*
 	 * Conta do usuário está desativada?
 	 */
+	@Required
 	@BooleanValue(trueValue = "S", falseValue = "N", type=BooleanType.STRING)
-	@Column(name = "BO_CONTA_DESATIVADA", required = true, defaultValue = "'N'")
+	@Column(name = "BO_CONTA_DESATIVADA", required = true, defaultValue = "'N'", label="Conta desativada?")
 	private Boolean inactiveAccount=Boolean.FALSE;
 
 	/*
 	 * Conta do usuário está bloqueada?
 	 */
+	@Required
 	@BooleanValue(trueValue = "S", falseValue = "N", type=BooleanType.STRING)
-	@Column(name = "BO_CONTA_BLOQUEADA", required = true, defaultValue = "'N'")
+	@Column(name = "BO_CONTA_BLOQUEADA", required = true, defaultValue = "'N'", label="Conta bloqueada?")
 	private Boolean blockedAccount=Boolean.FALSE;
 	
-	
+	@Required
 	@BooleanValue(falseValue = "N", trueValue = "S", type=BooleanType.STRING)
-	@Column(name = "BO_HORARIO_LIVRE", length = 1, required = true, defaultValue = "'N'")
+	@Column(name = "BO_HORARIO_LIVRE", length = 1, required = true, defaultValue = "'N'", label="Possuí horário livre acesso?")
 	private Boolean boFreeAccessTime;
 
+	@Required
 	@BooleanValue(falseValue = "N", trueValue = "S", type=BooleanType.STRING)
-	@Column(name = "BO_ADMINISTRADOR", length = 1, required = true, defaultValue = "'N'")
+	@Column(name = "BO_ADMINISTRADOR", length = 1, required = true, defaultValue = "'N'", label="É um administrador?")
 	private Boolean boAdministrator;
 	
 	@Lob
-	@Column(name="AVATAR")
+	@Column(name="AVATAR", label="Avatar(Foto)")
 	private String avatar;
 
 	/*
 	 * Horário de acesso do usuário
 	 */
-	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_HORARIO", inversedColumn = "ID_HORARIO")
+	@ForeignKey
+	@Column(name = "ID_HORARIO", inversedColumn = "ID_HORARIO", label="Horário de acesso")
 	private AccessTime accessTime;
 
 	/*
@@ -132,8 +158,8 @@ public class User extends Security implements IUser {
 	/*
 	 * Perfil (papel) do usuário dentro do sistema
 	 */
-	@ForeignKey(type = FetchType.EAGER)
-	@Column(name = "ID_PERFIL", inversedColumn = "ID_SEGURANCA")
+	@ForeignKey
+	@Column(name = "ID_PERFIL", inversedColumn = "ID_SEGURANCA", label="Perfil de segurança")
 	private Profile profile;
 
 
@@ -182,6 +208,7 @@ public class User extends Security implements IUser {
 		return boAdministrator;
 	}
 	
+	@JsonIgnore(true)
 	public Set<IAction> getActionList() {
 		Set<IAction> result = new HashSet<IAction>();
 		for (Action action : getActions()) {
@@ -308,9 +335,18 @@ public class User extends Security implements IUser {
 		this.avatar = avatar;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getUserId() {
 		return this.getId()+"";
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }

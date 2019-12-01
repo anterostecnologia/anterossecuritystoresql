@@ -41,7 +41,7 @@ import br.com.anteros.security.store.domain.ISystem;
  * @author Edson Martins edsonmartins2005@gmail.com
  */
 @Entity
-@Table(name = "SEGURANCASISTEMA") 
+@Table(name = "SEGURANCASISTEMA")      
 @Indexes(value = {
 		@Index(name = "UK_SEGURANCASISTEMA_NOME_SIST", columnNames = { "NOME_SISTEMA" }, unique = true) })
 public class System implements Serializable, ISystem {
