@@ -163,11 +163,7 @@ public class System implements Serializable, ISystem {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (resources == null) {
-			if (other.resources != null)
-				return false;
-		} else if (!resources.equals(other.resources))
-			return false;
+		
 		return true;
 	}
 
