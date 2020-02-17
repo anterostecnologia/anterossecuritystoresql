@@ -307,7 +307,7 @@
 			</repositories>
 		</profile>
 		<profile>
-			<id>local</id>
+			<id>bintray</id>
 			<build>
 				<pluginManagement>
 					<plugins>
@@ -373,7 +373,7 @@
 			</repositories>
 		</profile>
 		<profile>
-			<id>bintray</id>
+			<id>local</id>
 			<build>
 				<pluginManagement>
 					<plugins>
