@@ -430,8 +430,7 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 	}
 
 	@Override
-	public void initializeCurrentSession() throws Exception {
-		
+	public void initializeCurrentSession() throws Exception {		
 		SQLSession session = securityRepositorySql.getSQLSessionFactory().openSession();
 		securityRepositorySql.setSession(session);
 		systemRepositorySql.setSession(session);

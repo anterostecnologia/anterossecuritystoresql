@@ -61,7 +61,7 @@ public class SecurityRepositoryImpl extends GenericSQLRepository<Security, Long>
 		}
 
 		
-		return (User) findOneBySql(sql, new NamedParameter("plogin", sUserName[0]),null);
+		return (User) findOneBySql(sql, new NamedParameter("plogin", sUserName[0]),true,null);
 	}
 
 	@Override
