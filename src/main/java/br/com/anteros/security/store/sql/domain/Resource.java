@@ -67,13 +67,13 @@ public class Resource implements Serializable, IResource {
 	/*
 	 * Nome do Recurso
 	 */
-	@Column(name = "NOME_RECURSO", length = 40, required = true)
+	@Column(name = "NOME_RECURSO", length = 100, required = true)
 	private String name;
 
 	/*
 	 * Descrição do Recurso
 	 */
-	@Column(name = "DS_RECURSO", length = 40, required = true)
+	@Column(name = "DS_RECURSO", length = 100, required = true)
 	private String description;
 
 	/*
