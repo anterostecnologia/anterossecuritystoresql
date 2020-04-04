@@ -74,14 +74,12 @@ public class AccessTimeInterval implements Serializable {
 	/*
 	 * Hora Inicial
 	 */
-	//@Temporal(TemporalType.DATE_TIME)
 	@Column(name = "HORA_INICIAL", required = true, length=4, label="Hora inicial")
 	private String startTime;
 
 	/*
 	 * Hora Final
 	 */
-	//@Temporal(TemporalType.DATE_TIME)
 	@Column(name = "HORA_FINAL", required = true, length=4, label="hora final")
 	private String endTime;
 

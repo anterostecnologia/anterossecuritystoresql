@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.anteros.bean.validation.constraints.UUID;
@@ -52,7 +52,7 @@ import br.com.anteros.validation.api.constraints.Size;
  * @author Edson Martins edsonmartins2005@gmail.com
  */
 
-
+ 
 @JsonIgnoreProperties({ "actionList", "getActionList" })
 @Entity
 @DiscriminatorValue(value = "USUARIO")

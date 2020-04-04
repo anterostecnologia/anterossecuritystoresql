@@ -18,6 +18,8 @@ package br.com.anteros.security.store.sql.domain;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
 import br.com.anteros.persistence.metadata.annotation.Fetch;
@@ -175,6 +177,7 @@ public class System implements Serializable, ISystem {
 		return id;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getSystemId() {
 		return id+"";

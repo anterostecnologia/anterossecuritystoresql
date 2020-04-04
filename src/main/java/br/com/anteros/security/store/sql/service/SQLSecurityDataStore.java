@@ -21,7 +21,6 @@ import org.springframework.security.oauth2.provider.token.AuthenticationKeyGener
 import org.springframework.stereotype.Service;
 
 import br.com.anteros.core.utils.SerializationUtils;
-import br.com.anteros.persistence.parameter.NamedParameter;
 import br.com.anteros.persistence.session.SQLSession;
 import br.com.anteros.security.store.SecurityDataStore;
 import br.com.anteros.security.store.domain.IAction;
@@ -30,12 +29,9 @@ import br.com.anteros.security.store.domain.ISystem;
 import br.com.anteros.security.store.domain.IUser;
 import br.com.anteros.security.store.exception.AnterosSecurityStoreException;
 import br.com.anteros.security.store.sql.domain.AccessToken;
-import br.com.anteros.security.store.sql.domain.Action;
 import br.com.anteros.security.store.sql.domain.Approval;
 import br.com.anteros.security.store.sql.domain.RefreshToken;
 import br.com.anteros.security.store.sql.domain.Resource;
-import br.com.anteros.security.store.sql.domain.System;
-import br.com.anteros.security.store.sql.domain.User;
 import br.com.anteros.security.store.sql.repository.AccessTokenRepository;
 import br.com.anteros.security.store.sql.repository.ActionRepository;
 import br.com.anteros.security.store.sql.repository.ApprovalRepository;

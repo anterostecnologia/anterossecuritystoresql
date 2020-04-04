@@ -17,6 +17,8 @@ package br.com.anteros.security.store.sql.domain;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.anteros.persistence.metadata.annotation.BooleanValue;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.Entity;
@@ -39,7 +41,7 @@ import br.com.anteros.security.store.domain.IResource;
  * @author Edson Martins edsonmartins2005@gmail.com
  */
 @Entity
-@Table(name = "SEGURANCAACAO")
+@Table(name = "SEGURANCAACAO") 
 public class Action implements Serializable, IAction {
 
 	/*
@@ -213,20 +215,23 @@ public class Action implements Serializable, IAction {
 		this.version = version;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getActionName() {
 		return name;
 	}
 
+	@JsonIgnore
 	@Override
-	public boolean isActive() {
+	public boolean isActionActive() {
 		if (active==null)
 			return true;
 		return active;
 	}
 
+	@JsonIgnore
 	@Override
-	public void setActive(boolean value) {
+	public void setActiveAction(boolean value) {
 		this.active = value;		
 	}
 
@@ -243,6 +248,7 @@ public class Action implements Serializable, IAction {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getActionId() {
 		return id+"";

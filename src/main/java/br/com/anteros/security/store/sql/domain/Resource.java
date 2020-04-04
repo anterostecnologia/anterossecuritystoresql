@@ -19,7 +19,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.anteros.persistence.metadata.annotation.Cascade;
 import br.com.anteros.persistence.metadata.annotation.Column;
@@ -49,6 +50,7 @@ import br.com.anteros.security.store.domain.IResource;
  * 
  * @author Edson Martins edsonmartins2005@gmail.com
  */
+@JsonIgnoreProperties({ "getActionList", "addAction","getResourceId","getResourceName" })
 @Entity
 @Table(name = "SEGURANCARECURSO")
 @Indexes(value = {
@@ -187,6 +189,7 @@ public class Resource implements Serializable, IResource {
 		this.system = system;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getResourceName() {
 		return name;

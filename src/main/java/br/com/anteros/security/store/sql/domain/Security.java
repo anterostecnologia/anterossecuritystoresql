@@ -47,7 +47,7 @@ import br.com.anteros.persistence.metadata.annotation.type.InheritanceType;
  * @author Edson Martins edsonmartins2005@gmail.com
  */
 @Entity
-@Table(name = "SEGURANCA")
+@Table(name = "SEGURANCA") 
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TP_SEGURANCA", length = 40)
 @Indexes({ @Index(name = "PK_SEGURANCA", columnNames = {"ID_SEGURANCA"}),
