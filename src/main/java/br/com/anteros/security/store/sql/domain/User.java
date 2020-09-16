@@ -23,6 +23,7 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.Requi
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.BooleanValue;

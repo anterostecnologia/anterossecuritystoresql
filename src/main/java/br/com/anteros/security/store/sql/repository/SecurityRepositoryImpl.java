@@ -54,14 +54,7 @@ public class SecurityRepositoryImpl extends GenericSQLRepository<Security, Long>
 
 	public User findUserByName(String userName) {
 		String sql= "select * from SEGURANCA SEG where SEG.login = :plogin";
-		String[] sUserName = userName.split("/@");
-		DescriptionField tenantId = getTenantId();
-		if (tenantId!=null && sUserName.length>1) {
-			sql = sql + " AND SEG."+tenantId.getSimpleColumn().getColumnName()+" = "+'"'+sUserName[1]+'"';
-		}
-
-		
-		return (User) findOneBySql(sql, new NamedParameter("plogin", sUserName[0]),true,null);
+		return (User) findOneBySql(sql, new NamedParameter("plogin", userName),true,null);
 	}
 
 	@Override

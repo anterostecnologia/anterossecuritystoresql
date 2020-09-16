@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.DiscriminatorValue;
