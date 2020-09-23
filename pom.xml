@@ -39,27 +39,27 @@
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-Security-Store</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.0.9,)</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-Persistence-Core</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.0.86,)</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-Bean-Validation-Api</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.0.3,)</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-Bean-Validation</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.0.18,)</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-Persistence-Apt</artifactId>
-			<version>[1.0.0,)</version>
+			<version>[1.0.7,)</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -196,24 +196,7 @@
 		</pluginManagement>
 	</build>
 	
-	<repositories>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>bintray-puravida-software-repo</id>
-			<name>bintray</name>
-			<url>https://dl.bintray.com/puravida-software/repo</url>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>spring</id>
-			<name>extensions</name>
-			<url>https://repo.spring.io/release</url>
-		</repository>
-	</repositories>
+	
 
 
 	<profiles>
