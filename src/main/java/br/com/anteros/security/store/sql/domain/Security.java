@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import br.com.anteros.bean.validation.constraints.Required;
 import br.com.anteros.persistence.metadata.annotation.Cascade;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.DiscriminatorColumn;
@@ -74,14 +75,13 @@ public abstract class Security implements Serializable {
 	@SequenceGenerator(sequenceName = "SEQ_SEGURANCA", initialValue = 1)
 	private Long id;
 
+	@Required
 	@Column(name = "NOME", length = 40, required = true)
 	private String name;
 
+	@Required
 	@Column(name = "DESCRICAO", length = 40, required = true)
 	private String description;
-
-	@Column(name = "TP_SEGURANCA", length = 30, required = true)
-	private String securityType;
 
 	/*
 	 * Lista de Ações permitidas para um determinado objeto de Segurança.
@@ -126,14 +126,6 @@ public abstract class Security implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getSecurityType() {
-		return securityType;
-	}
-
-	public void setSecurityType(String securityType) {
-		this.securityType = securityType;
 	}
 
 	public Set<Action> getActions() {

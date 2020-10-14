@@ -15,15 +15,18 @@
  *******************************************************************************/
 package br.com.anteros.security.store.sql.domain;
 
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
 import br.com.anteros.bean.validation.constraints.UUID;
 import br.com.anteros.persistence.metadata.annotation.Column;
 import br.com.anteros.persistence.metadata.annotation.DiscriminatorValue;
 import br.com.anteros.persistence.metadata.annotation.Entity;
 import br.com.anteros.persistence.metadata.annotation.TenantId;
+import br.com.anteros.security.store.domain.IAction;
+import br.com.anteros.security.store.domain.IProfile;
 
 
 /**
@@ -37,7 +40,7 @@ import br.com.anteros.persistence.metadata.annotation.TenantId;
 
 @Entity
 @DiscriminatorValue(value = "PERFIL")
-public class Profile extends Security {
+public class Profile extends Security implements IProfile {
 
 	@Required
 	@UUID
@@ -51,6 +54,20 @@ public class Profile extends Security {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	@Override
+	public String getProfileId() {
+		return this.getId().toString();
+	}
+
+	@Override
+	public Set<IAction> getActionsList() {
+		Set<IAction> result = new HashSet<IAction>();
+		for (Action act: this.getActions()) {
+			result.add(act);
+		}
+		return result;
 	}
 	
 }
