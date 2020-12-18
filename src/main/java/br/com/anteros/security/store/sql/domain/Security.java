@@ -103,6 +103,17 @@ public abstract class Security implements Serializable {
 	 */
 	@Column(name = "EMAIL", length = 250)
 	private String email;
+	
+	@Column(name="UUID", length = 40)
+	private String uuid;
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	public Long getId() {
 		return id;
