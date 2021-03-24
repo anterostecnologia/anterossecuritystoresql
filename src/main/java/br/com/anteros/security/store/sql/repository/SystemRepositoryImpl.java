@@ -44,15 +44,21 @@ public class SystemRepositoryImpl extends GenericSQLRepository<System, Long> imp
 
 	@Override
 	public System addSystem(String systemName, String description) {
-		try {
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			System newSystem = System.of(systemName,description);
-			this.getSession().getTransaction().begin();
 			this.getSession().save(newSystem);
-			this.getSession().getTransaction().commit();
+			if (executeCommit)
+				this.getSession().getTransaction().commit();
 			return newSystem;
 		} catch (Exception e) {
 			try {
-				this.getSession().getTransaction().rollback();
+				if (executeCommit)
+					this.getSession().getTransaction().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

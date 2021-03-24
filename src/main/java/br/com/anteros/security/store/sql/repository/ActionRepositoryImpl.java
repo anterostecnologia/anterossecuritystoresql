@@ -43,15 +43,21 @@ public class ActionRepositoryImpl extends GenericSQLRepository<Action, Long> imp
 	@Override
 	public Action addAction(ISystem system, IResource resource, String actionName, String category, String description,
 			String version) {
-		try {
-			this.getSession().getTransaction().begin();
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			Action action = Action.of(actionName, description, category, resource, version);
 			this.getSession().save(action);
-			this.getSession().getTransaction().commit();
+			if (executeCommit)
+				this.getSession().getTransaction().commit();
 			return action;
 		} catch (Exception e) {
 			try {
-				this.getSession().getTransaction().rollback();
+				if (executeCommit)
+					this.getSession().getTransaction().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -63,15 +69,21 @@ public class ActionRepositoryImpl extends GenericSQLRepository<Action, Long> imp
 
 	@Override
 	public void removeActionByAllUsers(IAction act) {
-		try {
-			this.getSession().getTransaction().begin();
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			this.getSession().createQuery("delete from SEGURANCAACAOACAO where id_acao = :pid_acao",
 					new NamedParameter("pid_acao", act.getActionId())).executeQuery();
 			this.remove((Action) act);
-			this.getSession().getTransaction().commit();
+			if (executeCommit)
+				this.getSession().getTransaction().commit();
 		} catch (Exception e) {
 			try {
-				this.getSession().getTransaction().rollback();
+				if (executeCommit)
+					this.getSession().getTransaction().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

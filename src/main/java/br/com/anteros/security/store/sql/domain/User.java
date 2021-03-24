@@ -69,8 +69,8 @@ public class User extends Security implements IUser {
 	 * Login do usuário
 	 */
 	@Required
-	@Size(max = 20, min = 5)
-	@Column(name = "LOGIN", length = 20, label = "Login")
+	@Size(max = 250, min = 5)
+	@Column(name = "LOGIN", length = 250, label = "Login")
 	private String login;
 
 	/*

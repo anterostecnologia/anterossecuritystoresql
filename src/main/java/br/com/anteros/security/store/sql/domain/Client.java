@@ -64,9 +64,9 @@ public class Client implements Serializable, IClient {
 	
 //	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 //	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTINFORMATION")
-//	@MapKeyColumn(name="KEY")
-//	@Column(name="VALUE")
-//    private Map<String, Object> additionalInformation;
+//	@MapKeyColumn(name="CHAVE")
+//	@Column(name="VALOR")
+//    private Map<String, String> additionalInformation;
 	
 	@Fetch(mode=FetchMode.ELEMENT_COLLECTION)
 	@CollectionTable(joinColumns= {@JoinColumn(name="ID_CLIENTE")}, name="CLIENTAUTOAPPROVE")
@@ -152,11 +152,11 @@ public class Client implements Serializable, IClient {
 		this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
 	}
 
-//	public Map<String, Object> getAdditionalInformation() {
+//	public Map<String, String> getAdditionalInformation() {
 //		return additionalInformation;
 //	}
 //
-//	public void setAdditionalInformation(Map<String, Object> additionalInformation) {
+//	public void setAdditionalInformation(Map<String, String> additionalInformation) {
 //		this.additionalInformation = additionalInformation;
 //	}
 

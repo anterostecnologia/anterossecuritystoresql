@@ -28,13 +28,19 @@ public class ApprovalRepositoryImpl extends GenericSQLRepository<Approval, Long>
 
 	@Override
 	public void updateOrCreate(Collection<Approval> approvals) {
-		try {
-			this.getSession().getTransaction().begin();
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			save(approvals);
-			this.getSession().getTransaction().commit();
+			if (executeCommit)
+				this.getSession().getTransaction().commit();
 		} catch (Exception e) {
 			try {
-				this.getSession().getTransaction().rollback();
+				if (executeCommit)
+					this.getSession().getTransaction().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
@@ -44,8 +50,12 @@ public class ApprovalRepositoryImpl extends GenericSQLRepository<Approval, Long>
 
 	@Override
 	public void updateExpiresAt(Date now, Approval approval) {
-		try {
-			this.getSession().getTransaction().begin();
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			TypedSQLQuery<Approval> query = getSession().createQuery(
 					"SELECT * FROM A APROVACAO WHERE A.USER_ID = " + approval.getUserId() + " AND A.CLIENT_ID = "
 							+ approval.getClientId() + " A.ESCOPO = " + approval.getScope(),
@@ -55,9 +65,11 @@ public class ApprovalRepositoryImpl extends GenericSQLRepository<Approval, Long>
 				app.setExpiresAt(now);
 			}
 			save(resultList);
-			this.getSession().getTransaction().commit();
+			if (executeCommit)
+				this.getSession().getTransaction().commit();
 		} catch (Exception e) {
 			try {
+				if (executeCommit)
 				this.getSession().getTransaction().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();

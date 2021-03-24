@@ -61,7 +61,7 @@ import br.com.anteros.persistence.metadata.annotation.type.InheritanceType;
 @Indexes({ @Index(name = "PK_SEGURANCA", columnNames = {"ID_SEGURANCA"}),
 	@Index(name = "IX_SEGURANCA_ID_HORARIO", columnNames = {"ID_HORARIO"}),
 	@Index(name = "SEGURANCA_PERFIL", columnNames = {"ID_PERFIL"}),
-	@Index(name = "UK_SEGURANCA_LOGIN", columnNames = {"LOGIN"})})
+	@Index(name = "UK_SEGURANCA_LOGIN", columnNames = {"LOGIN"}, unique=true)})
 public abstract class Security implements Serializable {
 
 	

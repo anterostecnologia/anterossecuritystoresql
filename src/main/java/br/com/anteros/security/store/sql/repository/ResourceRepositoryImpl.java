@@ -51,13 +51,19 @@ public class ResourceRepositoryImpl extends GenericSQLRepository<Resource, Long>
 	@Override
 	public Resource addResource(ISystem system, String resourceName, String description) {
 		Resource resource = Resource.of(resourceName,description,(System)system);
-		try {
-			this.getSession().getTransaction().begin();
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			this.getSession().save(resource);
-			this.getSession().getTransaction().commit();
+			if (executeCommit)
+				this.getSession().getTransaction().commit();
 		} catch (Exception e) {
 			try {
-				this.getSession().getTransaction().rollback();
+				if (executeCommit)
+					this.getSession().getTransaction().rollback();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

@@ -53,8 +53,8 @@ public class SecurityRepositoryImpl extends GenericSQLRepository<Security, Long>
 	}
 
 	public User findUserByName(String userName) {
-		String sql= "select * from SEGURANCA SEG where SEG.login = :plogin";
-		return (User) findOneBySql(sql, new NamedParameter("plogin", userName),true,null);
+		String sql= "select * from SEGURANCA SEG where SEG.login = '"+userName+"'";
+		return (User) findOneBySql(sql,true,null);
 	}
 
 	@Override

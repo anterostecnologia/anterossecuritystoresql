@@ -79,16 +79,24 @@ public class AccessTokenRepositoryImpl extends GenericSQLRepository<AccessToken,
 
 	@Override
 	public void deleteByTokenId(String tokenKey) {
-		try {
-			this.getSession().getTransaction().begin();
+		boolean executeCommit = false;
+		try {			
+			if (!this.getSession().getTransaction().isActive()) {
+				this.getSession().getTransaction().begin();
+				executeCommit = true;
+			}
 			AccessToken accessToken = this.findByTokenId(tokenKey);
 			if (accessToken!=null) {
 				this.remove(accessToken);
 			}	
-			this.getSession().getTransaction().commit();
+			if (executeCommit) {
+				this.getSession().getTransaction().commit();
+			}
 		} catch (Exception e) {
 			try {
-				this.getSession().getTransaction().rollback();
+				if (executeCommit) {
+					this.getSession().getTransaction().rollback();
+				}	
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}

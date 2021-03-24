@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-Security-Store-SQL</artifactId>
-	<version>1.0.21</version>
+	<version>1.0.24</version>
 
 	<properties>
 		<java.versao>1.8</java.versao>
@@ -85,6 +85,32 @@
 			<version>${springsecurityoauth2.version}</version>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>local-REPO</id>
+			<url>http://vps4657.publiccloud.com.br:8082/artifactory/libs-release-local</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>local-REPO</id>
+			<url>http://vps4657.publiccloud.com.br:8082/artifactory/libs-release-local</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<name>Anteros Security Store SQL</name>
 	<description>
@@ -195,8 +221,8 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	
-	
+
+
 
 
 	<profiles>
