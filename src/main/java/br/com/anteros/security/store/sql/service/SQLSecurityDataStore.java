@@ -135,10 +135,15 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 	public IUser getUserByUserName(String username) {
 		SQLSession session;
 		try {
-			session = securityRepositorySql.getSQLSessionFactory().openSession();
-			securityRepositorySql.setSession(session);
 			User user = securityRepositorySql.getUserByUserName(username);
-			securityRepositorySql.getSession().clear();
+			if (user == null) {
+				session = securityRepositorySql.getSQLSessionFactory().openSession();
+				securityRepositorySql.setSession(session);
+				user = securityRepositorySql.getUserByUserName(username);
+				securityRepositorySql.getSession().clear();
+				securityRepositorySql.getSession().close();
+				securityRepositorySql.setSession(null);
+			}
 			return user;
 		} catch (Exception e) {
 		}
