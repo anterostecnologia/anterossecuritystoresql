@@ -16,14 +16,8 @@
 package br.com.anteros.security.store.sql.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import br.com.anteros.bean.validation.constraints.Required;
 import br.com.anteros.persistence.metadata.annotation.Cascade;
@@ -106,6 +100,21 @@ public abstract class Security implements Serializable {
 	
 	@Column(name="UUID", length = 40)
 	private String uuid;
+	
+	/*
+	 * Ações simples
+	 */
+	@Fetch(type = FetchType.LAZY, mode = FetchMode.ONE_TO_MANY, mappedBy = "user")
+	@Cascade(values = { CascadeType.ALL, CascadeType.DELETE_ORPHAN })
+	private List<UserSimpleAction> simpleActions;
+
+	public List<UserSimpleAction> getSimpleActions() {
+		return simpleActions;
+	}
+
+	public void setSimpleActions(List<UserSimpleAction> simpleActions) {
+		this.simpleActions = simpleActions;
+	}
 
 	public String getUuid() {
 		return uuid;

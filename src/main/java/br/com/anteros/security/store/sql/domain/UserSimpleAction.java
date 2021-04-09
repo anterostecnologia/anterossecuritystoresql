@@ -65,7 +65,22 @@ public class UserSimpleAction implements Serializable {
 	 */
 	@ForeignKey
 	@Column(name="ID_USUARIO", inversedColumn = "ID_SEGURANCA", required = true, label="Id.Usuário")
-	private User user;
+	private Security user;
+	
+	/*
+	 * Company
+	 */
+	@Size(max = 40)
+	@Column(name = "ID_COMPANY", required = true, length = 40, label = "Identificador da empresa")
+	private String company;
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
 
 	public Long getId() {
 		return id;
@@ -107,12 +122,13 @@ public class UserSimpleAction implements Serializable {
 		this.descriptionAction = descriptionAction;
 	}
 
-	public User getUser() {
+	public Security getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Security user) {
 		this.user = user;
 	}
+
 
 }

@@ -158,21 +158,6 @@ public class User extends Security implements IUser {
 	private List<Group> groups;
 
 	/*
-	 * Ações simples
-	 */
-	@Fetch(type = FetchType.LAZY, mode = FetchMode.ONE_TO_MANY, mappedBy = "user")
-	@Cascade(values = { CascadeType.ALL, CascadeType.DELETE_ORPHAN })
-	private List<UserSimpleAction> simpleActions;
-
-	public List<UserSimpleAction> getSimpleActions() {
-		return simpleActions;
-	}
-
-	public void setSimpleActions(List<UserSimpleAction> simpleActions) {
-		this.simpleActions = simpleActions;
-	}
-
-	/*
 	 * Perfil (papel) do usuário dentro do sistema
 	 */
 	@ForeignKey
