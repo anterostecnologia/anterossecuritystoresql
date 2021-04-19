@@ -49,13 +49,14 @@ import br.com.anteros.security.store.sql.repository.RefreshTokenRepository;
 import br.com.anteros.security.store.sql.repository.ResourceRepository;
 import br.com.anteros.security.store.sql.repository.SecurityRepository;
 import br.com.anteros.security.store.sql.repository.SystemRepository;
+import br.com.anteros.security.store.sql.repository.UserRepository;
 
 @Service("securityDataStore")
 @Scope("prototype")
 public class SQLSecurityDataStore implements SecurityDataStore {
 
 	@Autowired
-	protected SecurityRepository securityRepositorySql;
+	protected UserRepository userRepositorySql;
 
 	@Autowired
 	protected SystemRepository systemRepositorySql;
@@ -135,14 +136,40 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 	public IUser getUserByUserName(String username) {
 		SQLSession session;
 		try {
-			User user = securityRepositorySql.getUserByUserName(username);
+			User user = userRepositorySql.getUserByLoginName(username);
 			if (user == null) {
-				session = securityRepositorySql.getSQLSessionFactory().openSession();
-				securityRepositorySql.setSession(session);
-				user = securityRepositorySql.getUserByUserName(username);
-				securityRepositorySql.getSession().clear();
-				securityRepositorySql.getSession().close();
-				securityRepositorySql.setSession(null);
+				Object tenantId = userRepositorySql.getSession().getTenantId();
+				Object companyId =  userRepositorySql.getSession().getCompanyId();
+				session = userRepositorySql.getSQLSessionFactory().openSession();
+				session.setTenantId(tenantId);
+				session.setCompanyId(companyId);
+				user = userRepositorySql.getUserByLoginName(username);
+				userRepositorySql.getSession().clear();
+				userRepositorySql.getSession().close();
+				userRepositorySql.setSession(null);
+			}
+			return user;
+		} catch (Exception e) {
+		}
+		
+		return null;		
+	}
+	
+	public IUser getUserByUserNameWithPassword(String username) {
+		SQLSession session;
+		try {
+			User user = userRepositorySql.getUserByLoginNameWithPassword(username);
+			if (user == null) {
+				Object tenantId = userRepositorySql.getSession().getTenantId();
+				Object companyId =  userRepositorySql.getSession().getCompanyId();
+				session = userRepositorySql.getSQLSessionFactory().openSession();
+				session.setTenantId(tenantId);
+				session.setCompanyId(companyId);
+				userRepositorySql.setSession(session);
+				user = userRepositorySql.getUserByLoginName(username);
+				userRepositorySql.getSession().clear();
+				userRepositorySql.getSession().close();
+				userRepositorySql.setSession(null);
 			}
 			return user;
 		} catch (Exception e) {
@@ -760,8 +787,8 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 
 	@Override
 	public void initializeCurrentSession() throws Exception {		
-		SQLSession session = securityRepositorySql.getSQLSessionFactory().openSession();
-		securityRepositorySql.setSession(session);
+		SQLSession session = userRepositorySql.getSQLSessionFactory().openSession();
+		userRepositorySql.setSession(session);
 		systemRepositorySql.setSession(session);
 		resourceRepositorySql.setSession(session);
 		actionRepositorySql.setSession(session);
@@ -773,7 +800,7 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 
 	@Override
 	public void clearCurrentSession() throws Exception {
-		securityRepositorySql.getSession().clear();
+		userRepositorySql.getSession().clear();
 		systemRepositorySql.getSession().clear();
 		resourceRepositorySql.getSession().clear();
 		actionRepositorySql.getSession().clear();
