@@ -2,12 +2,13 @@ package br.com.anteros.security.store.sql.repository;
 
 import java.util.List;
 
+import br.com.anteros.security.store.sql.domain.TUser;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 
-import br.com.anteros.security.store.sql.domain.TUser;
 import br.com.anteros.security.store.sql.domain.User;
 import br.com.anteros.persistence.dsl.osql.OSQLQuery;
 import br.com.anteros.persistence.dsl.osql.types.expr.BooleanExpression;
@@ -42,7 +43,7 @@ public class UserRepositoryImpl extends GenericSQLRepository<User, Long> impleme
 		StringParam pLogin = new StringParam("PLOGIN");
 		
 		TUser tUser = new TUser("USU");
-		
+
 		BooleanExpression where = tUser.login.equalsIgnoreCase(pLogin);
 		if (getSession().getTenantId()!=null) {
 			where = where.and(tUser.owner.eq(getSession().getTenantId().toString()));
@@ -52,7 +53,7 @@ public class UserRepositoryImpl extends GenericSQLRepository<User, Long> impleme
 				.from(tUser)
 				.where(where).set(pLogin, login).readOnly(true)
 				.list(tUser);
-		
+
 		if (list != null && list.size()>0) {
 			User user = list.get(0);
 			user.getSimpleActions().size();

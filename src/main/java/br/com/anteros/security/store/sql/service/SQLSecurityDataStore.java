@@ -7,12 +7,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import br.com.anteros.security.store.sql.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +22,8 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.anteros.core.utils.SerializationUtils;
 import br.com.anteros.persistence.dsl.osql.OSQLQuery;
@@ -33,13 +34,6 @@ import br.com.anteros.security.store.domain.IResource;
 import br.com.anteros.security.store.domain.ISystem;
 import br.com.anteros.security.store.domain.IUser;
 import br.com.anteros.security.store.exception.AnterosSecurityStoreException;
-import br.com.anteros.security.store.sql.domain.AccessToken;
-import br.com.anteros.security.store.sql.domain.Approval;
-import br.com.anteros.security.store.sql.domain.Client;
-import br.com.anteros.security.store.sql.domain.RefreshToken;
-import br.com.anteros.security.store.sql.domain.Resource;
-import br.com.anteros.security.store.sql.domain.TClient;
-import br.com.anteros.security.store.sql.domain.User;
 import br.com.anteros.security.store.sql.exception.SQLStoreException;
 import br.com.anteros.security.store.sql.repository.AccessTokenRepository;
 import br.com.anteros.security.store.sql.repository.ActionRepository;
@@ -47,12 +41,12 @@ import br.com.anteros.security.store.sql.repository.ApprovalRepository;
 import br.com.anteros.security.store.sql.repository.ClientRepository;
 import br.com.anteros.security.store.sql.repository.RefreshTokenRepository;
 import br.com.anteros.security.store.sql.repository.ResourceRepository;
-import br.com.anteros.security.store.sql.repository.SecurityRepository;
 import br.com.anteros.security.store.sql.repository.SystemRepository;
 import br.com.anteros.security.store.sql.repository.UserRepository;
 
 @Service("securityDataStore")
 @Scope("prototype")
+@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 public class SQLSecurityDataStore implements SecurityDataStore {
 
 	@Autowired
@@ -85,69 +79,73 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		this.handleRevocationsAsExpiry = handleRevocationsAsExpiry;
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	public IResource getResourceByName(String systemName, String resourceName) {
 		return resourceRepositorySql.getResourceByName(systemName, resourceName);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	public ISystem getSystemByName(String systemName) {
 		return systemRepositorySql.getSystemByName(systemName);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	public ISystem addSystem(String systemName, String description) {
 		return systemRepositorySql.addSystem(systemName, description);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	public IResource addResource(ISystem system, String resourceName, String description) throws Exception {
 		return resourceRepositorySql.addResource(system, resourceName, description);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	public IAction addAction(ISystem system, IResource resource, String actionName, String category, String description,
 			String version) throws Exception {
 		return actionRepositorySql.addAction(system, resource, actionName, category, description, version);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	public IAction saveAction(IAction action) throws Exception {
-		boolean executeCommit = false;
 		try {			
-			if (!actionRepositorySql.getTransaction().isActive()) {
-				actionRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			actionRepositorySql.getSession().save(action);
-			if (executeCommit)
-				actionRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			if (executeCommit)
-				actionRepositorySql.getSession().getTransaction().rollback();
 			throw new AnterosSecurityStoreException(e);
 		}
 		return action;
 	}
-
+	
+	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	public IResource refreshResource(IResource resource) throws Exception {
 		resourceRepositorySql.refresh((Resource) resource,null);
+		if (resource != null)
+			resource.getActionList().size();
 		return resource;
 	}
 
+	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	public void removeActionByAllUsers(IAction act) throws Exception {
 		actionRepositorySql.removeActionByAllUsers(act);
 	}
 
+	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	public IUser getUserByUserName(String username) {
-		SQLSession session;
 		try {
 			User user = userRepositorySql.getUserByLoginName(username);
-			if (user == null) {
-				Object tenantId = userRepositorySql.getSession().getTenantId();
-				Object companyId =  userRepositorySql.getSession().getCompanyId();
-				session = userRepositorySql.getSQLSessionFactory().openSession();
-				session.setTenantId(tenantId);
-				session.setCompanyId(companyId);
-				user = userRepositorySql.getUserByLoginName(username);
-				userRepositorySql.getSession().clear();
-				userRepositorySql.getSession().close();
-				userRepositorySql.setSession(null);
-			}
+//			if (user == null) {
+//				Object tenantId = userRepositorySql.getSession().getTenantId();
+//				Object companyId =  userRepositorySql.getSession().getCompanyId();
+//				session = userRepositorySql.getSQLSessionFactory().openSession();
+//				session.setTenantId(tenantId);
+//				session.setCompanyId(companyId);
+//				user = userRepositorySql.getUserByLoginName(username);
+//				userRepositorySql.getSession().clear();
+//				userRepositorySql.getSession().close();
+//				userRepositorySql.setSession(null);
+//			}
 			return user;
 		} catch (Exception e) {
 		}
@@ -155,22 +153,19 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return null;		
 	}
 	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	public IUser getUserByUserNameWithPassword(String username) {
-		SQLSession session;
 		try {
 			User user = userRepositorySql.getUserByLoginNameWithPassword(username);
-			if (user == null) {
-				Object tenantId = userRepositorySql.getSession().getTenantId();
-				Object companyId =  userRepositorySql.getSession().getCompanyId();
-				session = userRepositorySql.getSQLSessionFactory().openSession();
-				session.setTenantId(tenantId);
-				session.setCompanyId(companyId);
-				userRepositorySql.setSession(session);
-				user = userRepositorySql.getUserByLoginName(username);
-				userRepositorySql.getSession().clear();
-				userRepositorySql.getSession().close();
-				userRepositorySql.setSession(null);
-			}
+//			if (user == null) {
+//				Object tenantId = userRepositorySql.getSession().getTenantId();
+//				Object companyId =  userRepositorySql.getSession().getCompanyId();
+//				session = userRepositorySql.getSQLSessionFactory().openSession();
+//				session.setTenantId(tenantId);
+//				session.setCompanyId(companyId);
+//				userRepositorySql.setSession(session);
+//				user = userRepositorySql.getUserByLoginName(username);
+//			}
 			return user;
 		} catch (Exception e) {
 		}
@@ -178,24 +173,13 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return null;		
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void addApprovals(Collection<org.springframework.security.oauth2.provider.approval.Approval> approvals) {
-		boolean executeCommit = false;
 		try {			
-			if (!approvalRepositorySql.getTransaction().isActive()) {
-				approvalRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			final Collection<Approval> _approvals = transformToApproval(approvals);
 			approvalRepositorySql.updateOrCreate(_approvals);
-			if (executeCommit)
-				approvalRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					approvalRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 	}
@@ -210,14 +194,11 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return result;
 	}
 
+	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void revokeApprovals(Collection<org.springframework.security.oauth2.provider.approval.Approval> approvals) {
-		boolean executeCommit = false;
 		try {			
-			if (!approvalRepositorySql.getTransaction().isActive()) {
-				approvalRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			final Collection<Approval> tmpApprovals = transformToApproval(approvals);
 	
 			for (final Approval mongoApproval : tmpApprovals) {
@@ -227,24 +208,19 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 					approvalRepositorySql.deleteByUserIdAndClientIdAndScope(mongoApproval);
 				}
 			}
-			if (executeCommit)
-				approvalRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					approvalRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public Collection<org.springframework.security.oauth2.provider.approval.Approval> getApprovals(String userId,
 			String clientId) {
 		final List<Approval> approvals = approvalRepositorySql.findByUserIdAndClientId(userId, clientId);
 		return transformToSecurityApprovals(approvals);
 	}
+
 
 	private Collection<org.springframework.security.oauth2.provider.approval.Approval> transformToSecurityApprovals(
 			List<Approval> approvals) {
@@ -262,6 +238,7 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return result;
 	}
 	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public OAuth2Authentication readAuthentication(final String token) {
         final String tokenId = extractTokenKey(token);
@@ -279,14 +256,10 @@ public class SQLSecurityDataStore implements SecurityDataStore {
         return null;
     }
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication, AuthenticationKeyGenerator authenticationKeyGenerator) {
-		boolean executeCommit = false;
 		try {			
-			if (!accessTokenRepositorySql.getSession().getTransaction().isActive()) {
-				accessTokenRepositorySql.getSession().getTransaction().begin();
-				executeCommit = true;
-			}
 			String refreshToken = null;
 			if (Objects.nonNull(token.getRefreshToken())) {
 				refreshToken = token.getRefreshToken().getValue();
@@ -303,20 +276,14 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 					authentication.isClientOnly() ? null : authentication.getName(),
 					authentication.getOAuth2Request().getClientId(), serializeAuthentication(authentication),
 					extractTokenKey(refreshToken));
-	
+			
 			accessTokenRepositorySql.save(oAuth2AccessToken);
-			if (executeCommit)
-				accessTokenRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit) 
-					accessTokenRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public OAuth2AccessToken readAccessToken(String tokenValue) {
 		final String tokenKey = extractTokenKey(tokenValue);
@@ -331,58 +298,34 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return null;
 	}
 
+	
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void removeAccessToken(OAuth2AccessToken token) {
-		boolean executeCommit = false;
 		try {			
-			if (!approvalRepositorySql.getSession().getTransaction().isActive()) {
-				approvalRepositorySql.getSession().getTransaction().begin();
-				executeCommit = true;
-			}
 			removeAccessToken(token.getValue());
-			if (executeCommit) {
-			 	approvalRepositorySql.getSession().getTransaction().commit();
-			}
 		} catch (Exception e) {
-			try {
-				if (executeCommit) {
-					approvalRepositorySql.getSession().getTransaction().rollback();
-				}	
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void storeRefreshToken(OAuth2RefreshToken refreshToken, OAuth2Authentication oAuth2Authentication) {
-		boolean executeCommit = false;
-		try {			
-			if (!refreshTokenRepositorySql.getTransaction().isActive()) {
-				refreshTokenRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
+		try {	
 			final String tokenKey = extractTokenKey(refreshToken.getValue());
 			final byte[] token = serializeRefreshToken(refreshToken);
 			final byte[] authentication = serializeAuthentication(oAuth2Authentication);
-	
 			final RefreshToken oAuth2RefreshToken = new RefreshToken(tokenKey, token, authentication);
-	
 			refreshTokenRepositorySql.save(oAuth2RefreshToken);
-			if (executeCommit)
-				refreshTokenRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					refreshTokenRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public OAuth2RefreshToken readRefreshToken(String tokenValue) {
 		final String tokenKey = extractTokenKey(tokenValue);
@@ -400,78 +343,41 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return null;
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken token) {
-		boolean executeCommit = false;
 		try {			
-			if (!refreshTokenRepositorySql.getTransaction().isActive()) {
-				refreshTokenRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			OAuth2Authentication result = readAuthenticationForRefreshToken(token.getValue());
-			if (executeCommit)
-				refreshTokenRepositorySql.getSession().getTransaction().commit();
 			return result;
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					refreshTokenRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void removeRefreshToken(OAuth2RefreshToken token) {
-		boolean executeCommit = false;
 		try {			
-			if (!refreshTokenRepositorySql.getTransaction().isActive()) {
-				refreshTokenRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			removeRefreshToken(token.getValue());
-			if (executeCommit)
-				refreshTokenRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					refreshTokenRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
-		boolean executeCommit = false;
 		try {			
-			if (!accessTokenRepositorySql.getTransaction().isActive()) {
-				accessTokenRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			removeAccessTokenUsingRefreshToken(refreshToken.getValue());
-			if (executeCommit)
-				accessTokenRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					accessTokenRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}	
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication, AuthenticationKeyGenerator authenticationKeyGenerator) {
-		boolean executeCommit = false;
-		try {			
-			if (!accessTokenRepositorySql.getTransaction().isActive()) {
-				accessTokenRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
+		try {	
 			OAuth2AccessToken accessToken = null;
 	
 			String key = authenticationKeyGenerator.extractKey(authentication);
@@ -487,19 +393,13 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 				removeAccessToken(accessToken.getValue());
 				storeAccessToken(accessToken, authentication, authenticationKeyGenerator);
 			}	
-			if (executeCommit)
-				accessTokenRepositorySql.getSession().getTransaction().commit();
 			return accessToken;
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					accessTokenRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}	
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public Collection<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String userName) {
 		final List<AccessToken> oAuth2AccessTokens = accessTokenRepositorySql
@@ -507,6 +407,7 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return transformToOAuth2AccessTokens(oAuth2AccessTokens);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
 		final List<AccessToken> oAuth2AccessTokens = accessTokenRepositorySql
@@ -557,6 +458,7 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		return SerializationUtils.deserialize(authentication);
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	public OAuth2Authentication readAuthenticationForRefreshToken(final String value) {
 		final String tokenId = extractTokenKey(value);
 
@@ -597,14 +499,10 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 				.collect(Collectors.toList());
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void addClientDetails(ClientDetails clientDetails) {
-		boolean executeCommit = false;
 		try {			
-			if (!clientRepositorySql.getTransaction().isActive()) {
-				clientRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			Client client = new Client();
 			client.setAccessTokenValiditySeconds(clientDetails.getAccessTokenValiditySeconds());
 			client.setAuthorities(
@@ -616,27 +514,16 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 			client.setResourceIds(clientDetails.getResourceIds());
 			client.setScope(clientDetails.getScope());
 			clientRepositorySql.save(client);
-			if (executeCommit)
-				clientRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					clientRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 		
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void updateClientDetails(ClientDetails clientDetails) {
-		boolean executeCommit = false;
 		try {			
-			if (!clientRepositorySql.getTransaction().isActive()) {
-				clientRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			Client clientToSave = clientRepositorySql.findOne(Long.valueOf(clientDetails.getClientId()),"");
 			if (clientToSave == null) {
 				throw new SQLStoreException("Client " + clientDetails.getClientId() + " não encontrado.");
@@ -650,76 +537,43 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 			clientToSave.setResourceIds(clientDetails.getResourceIds());
 			clientToSave.setScope(clientDetails.getScope());
 			clientRepositorySql.save(clientToSave);
-			if (executeCommit)
-				clientRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit) 
-					clientRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 		
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void updateClientSecret(String clientId, String secret) {
-		boolean executeCommit = false;
 		try {			
-			if (!clientRepositorySql.getTransaction().isActive()) {
-				clientRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			Client clientToSave = clientRepositorySql.findOne(Long.valueOf(clientId),"");
 			if (clientToSave == null) {
 				throw new SQLStoreException("Client " + clientId+ " não encontrado.");
 			}
 			clientToSave.setClientSecret(secret);
 			clientRepositorySql.save(clientToSave);
-			if (executeCommit)
-				clientRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-				clientRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 		
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = false, transactionManager = "securityTransactionManager")
 	@Override
 	public void removeClientDetails(String clientId) {
-		boolean executeCommit = false;
 		try {			
-			if (!clientRepositorySql.getTransaction().isActive()) {
-				clientRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			clientRepositorySql.remove(Long.valueOf(clientId));
-			if (executeCommit)
-				clientRepositorySql.getSession().getTransaction().commit();
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					clientRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 		
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public List<ClientDetails> listClientDetails() {
-		boolean executeCommit = false;
 		try {			
-			if (!clientRepositorySql.getTransaction().isActive()) {
-				clientRepositorySql.getTransaction().begin();
-				executeCommit = true;
-			}
 			Iterable<Client> iterable = clientRepositorySql.findAll("");
 			List<ClientDetails> result = new ArrayList<>();
 			for (Client client : iterable) {
@@ -737,20 +591,14 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 				bc.setScope(client.getScope());
 				result.add(bc);
 			}
-			if (executeCommit)
-				clientRepositorySql.getSession().getTransaction().commit();
 			return result;
 		} catch (Exception e) {
-			try {
-				if (executeCommit)
-					clientRepositorySql.getSession().getTransaction().rollback();
-			} catch (Exception e1) {
-			}
 			throw new AnterosSecurityStoreException(e);
 		}
 		
 	}
 
+	@Transactional(rollbackFor = Throwable.class, propagation = Propagation.REQUIRED, readOnly = true, transactionManager = "securityTransactionManager")
 	@Override
 	public ClientDetails loadClientByClientId(String clientId) {
 		OSQLQuery query = clientRepositorySql.createObjectQuery();
@@ -759,7 +607,7 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 		if (client != null) {
 			BaseClientDetails bc = new BaseClientDetails();
 			bc.setAccessTokenValiditySeconds(client.getAccessTokenValiditySeconds());
-			
+
 			if (client.getAuthorities() != null) {
 				bc.setAuthorities(client.getAuthorities().stream().map(item -> new SimpleGrantedAuthority(item))
 						.collect(Collectors.toList()));
@@ -787,27 +635,27 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 
 	@Override
 	public void initializeCurrentSession() throws Exception {		
-		SQLSession session = userRepositorySql.getSQLSessionFactory().openSession();
-		userRepositorySql.setSession(session);
-		systemRepositorySql.setSession(session);
-		resourceRepositorySql.setSession(session);
-		actionRepositorySql.setSession(session);
-		approvalRepositorySql.setSession(session);
-		accessTokenRepositorySql.setSession(session);
-		refreshTokenRepositorySql.setSession(session);
-		clientRepositorySql.setSession(session);
+//		SQLSession session = userRepositorySql.getSQLSessionFactory().openSession();
+//		userRepositorySql.setSession(session);
+//		systemRepositorySql.setSession(session);
+//		resourceRepositorySql.setSession(session);
+//		actionRepositorySql.setSession(session);
+//		approvalRepositorySql.setSession(session);
+//		accessTokenRepositorySql.setSession(session);
+//		refreshTokenRepositorySql.setSession(session);
+//		clientRepositorySql.setSession(session);
 	}
 
 	@Override
 	public void clearCurrentSession() throws Exception {
-		userRepositorySql.getSession().clear();
-		systemRepositorySql.getSession().clear();
-		resourceRepositorySql.getSession().clear();
-		actionRepositorySql.getSession().clear();
-		approvalRepositorySql.getSession().clear();
-		accessTokenRepositorySql.getSession().clear();
-		refreshTokenRepositorySql.getSession().clear();
-		clientRepositorySql.getSession().clear();
+//		userRepositorySql.getSession().clear();
+//		systemRepositorySql.getSession().clear();
+//		resourceRepositorySql.getSession().clear();
+//		actionRepositorySql.getSession().clear();
+//		approvalRepositorySql.getSession().clear();
+//		accessTokenRepositorySql.getSession().clear();
+//		refreshTokenRepositorySql.getSession().clear();
+//		clientRepositorySql.getSession().clear();
 		
 	}
 
