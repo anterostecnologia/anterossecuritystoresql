@@ -135,17 +135,17 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 	public IUser getUserByUserName(String username) {
 		try {
 			User user = userRepositorySql.getUserByLoginName(username);
-//			if (user == null) {
-//				Object tenantId = userRepositorySql.getSession().getTenantId();
-//				Object companyId =  userRepositorySql.getSession().getCompanyId();
-//				session = userRepositorySql.getSQLSessionFactory().openSession();
-//				session.setTenantId(tenantId);
-//				session.setCompanyId(companyId);
-//				user = userRepositorySql.getUserByLoginName(username);
-//				userRepositorySql.getSession().clear();
-//				userRepositorySql.getSession().close();
-//				userRepositorySql.setSession(null);
-//			}
+			if (user == null) {
+				Object tenantId = userRepositorySql.getSession().getTenantId();
+				Object companyId =  userRepositorySql.getSession().getCompanyId();
+				SQLSession session = userRepositorySql.getSQLSessionFactory().openSession();
+				session.setTenantId(tenantId);
+				session.setCompanyId(companyId);
+				user = userRepositorySql.getUserByLoginName(username);
+				userRepositorySql.getSession().clear();
+				userRepositorySql.getSession().close();
+				userRepositorySql.setSession(null);
+			}
 			return user;
 		} catch (Exception e) {
 		}
@@ -157,15 +157,15 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 	public IUser getUserByUserNameWithPassword(String username) {
 		try {
 			User user = userRepositorySql.getUserByLoginNameWithPassword(username);
-//			if (user == null) {
-//				Object tenantId = userRepositorySql.getSession().getTenantId();
-//				Object companyId =  userRepositorySql.getSession().getCompanyId();
-//				session = userRepositorySql.getSQLSessionFactory().openSession();
-//				session.setTenantId(tenantId);
-//				session.setCompanyId(companyId);
-//				userRepositorySql.setSession(session);
-//				user = userRepositorySql.getUserByLoginName(username);
-//			}
+			if (user == null) {
+				Object tenantId = userRepositorySql.getSession().getTenantId();
+				Object companyId =  userRepositorySql.getSession().getCompanyId();
+				SQLSession session = userRepositorySql.getSQLSessionFactory().openSession();
+				session.setTenantId(tenantId);
+				session.setCompanyId(companyId);
+				userRepositorySql.setSession(session);
+				user = userRepositorySql.getUserByLoginName(username);
+			}
 			return user;
 		} catch (Exception e) {
 		}
