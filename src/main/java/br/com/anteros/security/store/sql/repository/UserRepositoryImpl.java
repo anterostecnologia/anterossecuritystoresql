@@ -41,26 +41,39 @@ public class UserRepositoryImpl extends GenericSQLRepository<User, Long> impleme
 	@Override
 	public User getUserByLoginNameWithPassword(String login) {
 		StringParam pLogin = new StringParam("PLOGIN");
+		StringParam pOwner = new StringParam("POWNER");
 		
 		TUser tUser = new TUser("USU");
 
 		BooleanExpression where = tUser.login.equalsIgnoreCase(pLogin);
 		if (getSession().getTenantId()!=null) {
-			where = where.and(tUser.owner.eq(getSession().getTenantId().toString()));
+			where = where.and(tUser.owner.eq(pOwner));
 		}
 
-		List<User> list = new OSQLQuery(getSession())
+		OSQLQuery consulta = new OSQLQuery(getSession())
 				.from(tUser)
-				.where(where).set(pLogin, login).readOnly(true)
-				.list(tUser);
+				.where(where);
+		consulta.set(pLogin, login).readOnly(true);
+		if (getSession().getTenantId()!=null) {
+			consulta.set(pOwner,getSession().getTenantId().toString());
+		}
+		List<User> list = consulta.list(tUser);
 
 		if (list != null && list.size()>0) {
-			User user = list.get(0);
-			user.getSimpleActions().size();
-			if (user.getProfile() != null) {
-				user.getProfile().getSimpleActions().size();
+			User result = list.iterator().next();
+			if (list.size()>0) {
+				for (User user : list){
+					if (!user.isInactiveAccount()){
+						result = user;
+						break;
+					}
+				}
 			}
-			return user;
+			result.getSimpleActions().size();
+			if (result.getProfile() != null) {
+				result.getProfile().getSimpleActions().size();
+			}
+			return result;
 		}
 		
 		return null;
