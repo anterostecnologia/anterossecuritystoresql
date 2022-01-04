@@ -75,4 +75,6 @@ public class Group extends Security {
 	}
 
 
+	public Group() {
+	}
 }

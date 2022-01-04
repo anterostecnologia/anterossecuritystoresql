@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-Security-Store-SQL</artifactId>
-	<version>1.0.34</version>
+	<version>1.0.35</version>
 
 	<properties>
 		<java.versao>1.8</java.versao>
@@ -276,8 +276,8 @@
 								</execution>
 							</executions>
 							<configuration>
+								<sourcepath>/Users/edsonmartins/intellij/anterossecuritystoresql/target/generated-sources/annotations:/Users/edsonmartins/intellij/anterossecuritystoresql/src/main/java</sourcepath>
 								<doclint>none</doclint>
-								<additionalparam>-Xdoclint:none</additionalparam>
 							</configuration>
 						</plugin>
 					</plugins>
@@ -344,8 +344,8 @@
 								</execution>
 							</executions>
 							<configuration>
+								<sourcepath>/Users/edsonmartins/intellij/anterossecuritystoresql/target/generated-sources/annotations:/Users/edsonmartins/intellij/anterossecuritystoresql/src/main/java</sourcepath>
 								<doclint>none</doclint>
-								<additionalparam>-Xdoclint:none</additionalparam>
 							</configuration>
 						</plugin>
 					</plugins>
@@ -401,6 +401,7 @@
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>3.3.1</version>
 							<executions>
 								<execution>
 									<id>attach-javadocs</id>
@@ -411,8 +412,8 @@
 								</execution>
 							</executions>
 							<configuration>
+								<sourcepath>/Users/edsonmartins/intellij/anterossecuritystoresql/target/generated-sources/annotations:/Users/edsonmartins/intellij/anterossecuritystoresql/src/main/java</sourcepath>
 								<doclint>none</doclint>
-								<additionalparam>-Xdoclint:none</additionalparam>
 							</configuration>
 						</plugin>
 					</plugins>

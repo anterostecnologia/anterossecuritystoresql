@@ -69,5 +69,7 @@ public class Profile extends Security implements IProfile {
 		}
 		return result;
 	}
-	
+
+	public Profile() {
+	}
 }

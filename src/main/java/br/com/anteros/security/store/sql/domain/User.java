@@ -351,4 +351,6 @@ public class User extends Security implements IUser {
 		this.owner = owner;
 	}
 
+	public User() {
+	}
 }

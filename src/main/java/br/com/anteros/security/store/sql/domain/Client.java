@@ -176,5 +176,6 @@ public class Client implements Serializable, IClient {
 		this.id = id;
 	}
 
-
+	public Client() {
+	}
 }

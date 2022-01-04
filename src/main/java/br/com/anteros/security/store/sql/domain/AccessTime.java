@@ -106,4 +106,6 @@ public class AccessTime implements Serializable {
 		this.owner = owner;
 	}
 
+	public AccessTime() {
+	}
 }

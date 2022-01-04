@@ -143,5 +143,6 @@ public class SecuritySession implements Serializable {
 		this.version = version;
 	}
 
-
+	public SecuritySession() {
+	}
 }

@@ -135,6 +135,6 @@ public class SecurityAccess implements Serializable {
 		this.owner = owner;
 	}
 
-	
-
+	public SecurityAccess() {
+	}
 }

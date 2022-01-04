@@ -119,6 +119,6 @@ public class Terminal implements Serializable {
 		this.owner = owner;
 	}
 
-	
-
+	public Terminal() {
+	}
 }
