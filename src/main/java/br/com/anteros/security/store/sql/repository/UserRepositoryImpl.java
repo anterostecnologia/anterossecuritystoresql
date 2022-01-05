@@ -69,8 +69,15 @@ public class UserRepositoryImpl extends GenericSQLRepository<User, Long> impleme
 					}
 				}
 			}
+			result.getActionList().size();
+			result.getGroups().size();
+			result.getActions().size();
 			result.getSimpleActions().size();
+			result.getSecurityAccess().size();
 			if (result.getProfile() != null) {
+				result.getProfile().getActions().size();
+				result.getProfile().getSimpleActions().size();
+				result.getProfile().getSecurityAccess().size();
 				result.getProfile().getSimpleActions().size();
 			}
 			return result;

@@ -165,6 +165,11 @@ public class SQLSecurityDataStore implements SecurityDataStore {
 				session.setCompanyId(companyId);
 				userRepositorySql.setSession(session);
 				user = userRepositorySql.getUserByLoginName(username);
+				user.getActionList().size();
+				user.getGroups().size();
+				user.getActions().size();
+				user.getSimpleActions().size();
+				user.getSecurityAccess().size();
 			}
 			return user;
 		} catch (Exception e) {
