@@ -70,11 +70,11 @@ public abstract class Security implements Serializable {
 	private Long id;
 
 	@Required
-	@Column(name = "NOME", length = 40, required = true)
+	@Column(name = "NOME", length = 40, required = true, label="Nome")
 	private String name;
 
 	@Required
-	@Column(name = "DESCRICAO", length = 40, required = true)
+	@Column(name = "DESCRICAO", length = 40, required = true, label="Descrição")
 	private String description;
 
 	/*
@@ -95,10 +95,10 @@ public abstract class Security implements Serializable {
 	/*
 	 * Email do usuário
 	 */
-	@Column(name = "EMAIL", length = 250)
+	@Column(name = "EMAIL", length = 250, label="Email")
 	private String email;
 	
-	@Column(name="UUID", length = 40)
+	@Column(name="UUID", length = 40, label="Unique ID")
 	private String uuid;
 	
 	/*

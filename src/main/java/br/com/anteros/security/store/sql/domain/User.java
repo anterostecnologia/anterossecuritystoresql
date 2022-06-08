@@ -60,7 +60,6 @@ import br.com.anteros.validation.api.constraints.Size;
 @DiscriminatorValue(value = "USUARIO")
 public class User extends Security implements IUser {
 
-	@UUID
 	@TenantId
 	@Column(name = "ID_OWNER", length = 40, label = "Proprietário do banco de dados")
 	private String owner;
