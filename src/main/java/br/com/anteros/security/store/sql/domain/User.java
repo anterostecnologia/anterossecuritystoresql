@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import br.com.anteros.persistence.metadata.annotation.*;
+import br.com.anteros.persistence.metadata.annotation.type.*;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,21 +28,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import br.com.anteros.bean.validation.constraints.UUID;
-import br.com.anteros.persistence.metadata.annotation.BooleanValue;
-import br.com.anteros.persistence.metadata.annotation.Cascade;
-import br.com.anteros.persistence.metadata.annotation.Column;
-import br.com.anteros.persistence.metadata.annotation.DiscriminatorValue;
-import br.com.anteros.persistence.metadata.annotation.Entity;
-import br.com.anteros.persistence.metadata.annotation.Fetch;
-import br.com.anteros.persistence.metadata.annotation.ForeignKey;
-import br.com.anteros.persistence.metadata.annotation.JoinColumn;
-import br.com.anteros.persistence.metadata.annotation.JoinTable;
-import br.com.anteros.persistence.metadata.annotation.Lob;
-import br.com.anteros.persistence.metadata.annotation.TenantId;
-import br.com.anteros.persistence.metadata.annotation.type.BooleanType;
-import br.com.anteros.persistence.metadata.annotation.type.CascadeType;
-import br.com.anteros.persistence.metadata.annotation.type.FetchMode;
-import br.com.anteros.persistence.metadata.annotation.type.FetchType;
 import br.com.anteros.security.store.domain.IAction;
 import br.com.anteros.security.store.domain.IProfile;
 import br.com.anteros.security.store.domain.IUser;
@@ -162,6 +149,19 @@ public class User extends Security implements IUser {
 	@ForeignKey
 	@Column(name = "ID_PERFIL", inversedColumn = "ID_SEGURANCA", label = "Perfil de segurança")
 	private Profile profile;
+
+	/*
+	 * Telefone
+	 */
+	@Column(name="PHONE", length = 200, label="Telefone")
+	private String phone;
+
+
+	/*
+	 * Papel principal do usuário no sistema
+	 */
+	@Column(name="ROLE_USER", length = 200, label="Papél principal")
+	private String role;
 
 	@Override
 	public int hashCode() {
@@ -348,6 +348,22 @@ public class User extends Security implements IUser {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public User() {
